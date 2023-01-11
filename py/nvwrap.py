@@ -48,7 +48,7 @@ def nvwrap_GetDriverVersion():
 def nvwrap_GetTotalMem(dev):
     handle = nvmlDeviceGetHandleByIndex(dev)
     inf = nvmlDeviceGetMemoryInfo(handle)
-    total_mem = "{}".format(inf.total >> 20)
+    total_mem = "{} MiB".format(inf.total >> 20)
     return total_mem
 
 def nvwrap_GetDeviceSerial(dev):
@@ -112,7 +112,7 @@ def nvwrap_GetCurrPcieGen(dev):
         inf = nvmlDeviceGetCurrPcieLinkGeneration(handle)
         curr_pcie_gen = "{}".format(inf)
     except NVMLError as err:
-        curr_pcie_gen = handle_err(err)
+        curr_pcie_gen = "???"
     return curr_pcie_gen
 
 def nvwrap_GetCurrPcieWidth(dev):
@@ -121,5 +121,77 @@ def nvwrap_GetCurrPcieWidth(dev):
         inf = nvmlDeviceGetCurrPcieLinkWidth(handle)
         curr_pcie_width = "x{}".format(inf)
     except NVMLError as err:
-        curr_pcie_width = handle_err(err)
+        curr_pcie_width = "???"
     return curr_pcie_width
+
+def nvwrap_GetCurrMemory(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        inf = nvmlDeviceGetMemoryInfo(handle)
+        curr_mem = "{} MiB".format(inf.used >> 20)
+    except NVMLError as err:
+        curr_mem = "???"
+    return curr_mem
+
+def nvwrap_GetCurrTemp(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        inf = nvmlDeviceGetTemperature(handle, NVML_TEMPERATURE_GPU)
+        temp = "{} °C".format(inf)
+    except NVMLError as err:
+        temp = "???"
+    return temp
+
+def nvwrap_GetOpTemp(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        inf = nvmlDeviceGetTemperatureThreshold(handle, NVML_TEMPERATURE_THRESHOLD_GPU_MAX)
+        max_temp = "{} °C".format(inf)
+    except NVMLError as err:
+        max_temp = "???"
+    return max_temp
+
+def nvwrap_GetCurrGraphicsClock(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        inf = nvmlDeviceGetClockInfo(handle, NVML_CLOCK_GRAPHICS)
+        clock = "{} MHz".format(inf)
+    except NVMLError as err:
+        clock = "???"
+    return clock
+
+def nvwrap_GetCurrSMClock(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        inf = nvmlDeviceGetClockInfo(handle, NVML_CLOCK_SM)
+        clock = "{} MHz".format(inf)
+    except NVMLError as err:
+        clock = "???"
+    return clock
+
+def nvwrap_GetCurrMemoryClock(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        inf = nvmlDeviceGetClockInfo(handle, NVML_CLOCK_MEM)
+        clock = "{} MHz".format(inf)
+    except NVMLError as err:
+        clock = "???"
+    return clock
+
+def nvwrap_GetCurrVideoClock(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        inf = nvmlDeviceGetClockInfo(handle, NVML_CLOCK_VIDEO)
+        clock = "{} MHz".format(inf)
+    except NVMLError as err:
+        clock = "???"
+    return clock
+
+def nvwrap_GetCurrPower(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        inf = nvmlDeviceGetPowerUsage(handle) / 1000.0
+        power = '%.2f W' % inf
+    except NVMLError as err:
+        power = "???"
+    return power

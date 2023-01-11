@@ -19,15 +19,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from PyQt6.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QComboBox, QFormLayout, QLineEdit)
-from PyQt6.QtCore import QSize
+from PyQt6.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QComboBox, QFormLayout, QLineEdit, QLabel)
+from PyQt6.QtCore import (QSize, QTimer)
+from rt_widget import RealtimeWidget
 from nvwrap import * # NVML wrapper
 
 class Window(QMainWindow):
+    def update_rt(self):
+        self.rt_widget.update_vars(self.devbox.currentIndex())
+
     def __init__(self):
         super().__init__()
         self.init_interface()
         self.init_vars()
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_rt)
+        self.timer.setInterval(1400) # in ms
+        self.timer.start()
 
     def init_interface(self):
         self.setFixedSize(QSize(600, 400))
@@ -35,7 +44,6 @@ class Window(QMainWindow):
         central = QWidget()
         main_layout = QHBoxLayout() # central layout
         left_layout = QVBoxLayout() # static informations
-        right_layout = QVBoxLayout() # realtime informations
 
         ### left_layout ###
         # Device Combobox
@@ -60,12 +68,16 @@ class Window(QMainWindow):
         self.pciegenline = QLineEdit()
         self.pciegenline.setReadOnly(True)
         self.pciegenline.setToolTip("The PCIe Generation the GPU is supporting. This <b>does not</b> show the <b>current</b> PCIe Generation.")
+        self.c_pciegenLbl = QLabel()
         form.addRow("PCIe Generation:", self.pciegenline)
+        form.addRow("<i>Current:</i> ", self.c_pciegenLbl)
         # PCIe Width
         self.pciewidthline = QLineEdit()
         self.pciewidthline.setReadOnly(True)
         self.pciewidthline.setToolTip("The PCIe Width Lane the GPU is supporting. This <b>does not</b> show the <b>current</b> PCIe Width.")
+        self.c_pciewidthLbl = QLabel()
         form.addRow("PCIe Width:", self.pciewidthline)
+        form.addRow("<i>Current:</i> ", self.c_pciewidthLbl)
         # Shutdown Temperature
         self.maxtempline = QLineEdit()
         self.maxtempline.setReadOnly(True)
@@ -81,13 +93,11 @@ class Window(QMainWindow):
 
         left_layout.addLayout(form)
 
-        # rt_widget & right_layout
-        rt_widget = QWidget() # todo => pyfile
-        rt_widget.setFixedWidth(350)
-        rt_widget.setLayout(right_layout)
+        # rt_widget
+        self.rt_widget = RealtimeWidget()
 
         main_layout.addLayout(left_layout)
-        main_layout.addWidget(rt_widget)
+        main_layout.addWidget(self.rt_widget)
 
         central.setLayout(main_layout)
         self.setCentralWidget(central)
@@ -97,9 +107,11 @@ class Window(QMainWindow):
         self.devbox.addItems(nvwrap_GetAllDevices())
         self.serialline.setText(nvwrap_GetDeviceSerial(self.devbox.currentIndex()))
         self.drvline.setText(nvwrap_GetDriverVersion())
-        self.vramline.setText(nvwrap_GetTotalMem(self.devbox.currentIndex()) + " MiB")
+        self.vramline.setText(nvwrap_GetTotalMem(self.devbox.currentIndex()))
         self.pciegenline.setText(nvwrap_GetPcieGen(self.devbox.currentIndex()))
+        self.c_pciegenLbl.setText(nvwrap_GetCurrPcieGen(self.devbox.currentIndex()))
         self.pciewidthline.setText(nvwrap_GetPcieWidth(self.devbox.currentIndex()))
+        self.c_pciewidthLbl.setText(nvwrap_GetCurrPcieWidth(self.devbox.currentIndex()))
         self.maxtempline.setText(nvwrap_GetTempShutdown(self.devbox.currentIndex()))
         self.sdtempline.setText(nvwrap_GetTempSlowdown(self.devbox.currentIndex()))
         self.powlimitline.setText(nvwrap_GetPowerLimit(self.devbox.currentIndex()))
