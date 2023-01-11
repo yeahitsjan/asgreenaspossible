@@ -26,6 +26,7 @@ from PyQt6.QtWidgets import QApplication
 def main():
     green_app = QApplication(sys.argv)
     win = Window()
+    win.setWindowTitle("AsGreenAsPossible")
     win.show()
     sys.exit(green_app.exec())
 
