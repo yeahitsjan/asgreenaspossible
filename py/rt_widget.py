@@ -101,4 +101,3 @@ class RealtimeWidget(QWidget):
         self.MaxOpTempLbl.setText(nvwrap_GetOpTemp(dev))
         self.CurrentPowerDrawLbl.setText(nvwrap_GetCurrPower(dev))
         self.MaxPowerDrawLbl.setText(nvwrap_GetPowerLimit(dev))
-        nvmlShutdown()
