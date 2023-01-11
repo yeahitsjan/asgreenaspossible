@@ -22,9 +22,12 @@
 import sys
 from window import Window
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtGui import QIcon
 
 def main():
     green_app = QApplication(sys.argv)
+    # todo: move icon to qrc
+    green_app.setWindowIcon(QIcon("../resources/icon.svg"))
     win = Window()
     win.setWindowTitle("AsGreenAsPossible")
     win.show()
