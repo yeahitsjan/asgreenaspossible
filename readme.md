@@ -3,9 +3,12 @@
 
 <img src="https://raw.githubusercontent.com/yeahitsjan/asgreenaspossible/develop/resources/icon.png" width="96" height="96" align="right">
 
+
 > **WARNING:** Currently not ready for production use. Not all features are implemented.
 
 AGAP tries to display various static & realtime informations about your NVIDIA GPU in a simple window. It uses [py3nvml](https://github.com/fbcotter/py3nvml) under the hood.
+
+![screenshot 11.01.23](https://raw.githubusercontent.com/yeahitsjan/asgreenaspossible/develop/resources/screenshot_110123.PNG)
 
 Currently supported features:
 - Device List (show all GPUs)
