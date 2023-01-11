@@ -1,5 +1,7 @@
 ## AsGreenAsPossible
-![pythonver](https://img.shields.io/badge/python-3.11-blue?style=flat-square&logo=python) ![ver](https://img.shields.io/badge/version-0.0.0-green?style=flat-square)
+![pythonver](https://img.shields.io/badge/python-3.11-blue?style=flat-square&logo=python) ![ver](https://img.shields.io/badge/version-0.0.0-green?style=flat-square) 
+
+<img src="https://raw.githubusercontent.com/yeahitsjan/asgreenaspossible/develop/resources/icon.png" width="96" height="96" align="right">
 
 > **WARNING:** Currently not ready for production use. Not all features are implemented.
 
