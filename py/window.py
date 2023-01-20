@@ -85,6 +85,7 @@ class Window(QMainWindow):
         # System Driver version
         self.drvline = QLineEdit()
         self.drvline.setReadOnly(True)
+        self.drvline.setToolTip("The current NVIDIA driver version installed.")
         form.addRow("Driver version:", self.drvline)
         # Total VRAM
         self.vramline = QLineEdit()
@@ -105,14 +106,17 @@ class Window(QMainWindow):
         # Shutdown Temperature
         self.maxtempline = QLineEdit()
         self.maxtempline.setReadOnly(True)
+        self.maxtempline.setToolTip("The maximum temperature the GPU can handle.\nIf your GPU reaches this temperature it is automatically shut down.")
         form.addRow("Shutdown Temperature:", self.maxtempline)
         # Slowdown Temperature
         self.sdtempline = QLineEdit()
         self.sdtempline.setReadOnly(True)
+        self.sdtempline.setToolTip("The temperature were the GPU starts slowing down to protect itself from heat.")
         form.addRow("Slowdown Temperature:", self.sdtempline)
         # Power Limit
         self.powlimitline = QLineEdit()
         self.powlimitline.setReadOnly(True)
+        self.powlimitline.setToolTip("The manufacturer defined power limit of the GPU.")
         form.addRow("Power Limit:", self.powlimitline)
 
         left_layout.addLayout(form)
