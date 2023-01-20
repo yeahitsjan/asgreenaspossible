@@ -33,6 +33,22 @@ def nvwrap_Init():
 def nvwrap_Shutdown():
     nvmlShutdown()
 
+def nvwrap_GetDeviceId(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    _devinf = nvmlDeviceGetPciInfo(handle)
+    return '%08X' % (_devinf.pciDeviceId)
+
+def nvwrap_GetBridgeChipType(dev):
+    handle = nvmlDeviceGetHandleByIndex(dev)
+    try:
+        bridge_type = nvmlDeviceGetBridgeChipInfo(handle)
+        if bridge_type.bridgeChipInfo[0].type == 0:
+            return 'PLX'
+        else:
+            return 'BR04'
+    except NVMLError as err:
+        return handle_err(err)
+
 def nvwrap_GetAllDevices():
     devlist = []
     dev_count = nvmlDeviceGetCount()
@@ -105,7 +121,11 @@ def nvwrap_GetPowerLimit(dev):
         power_limit = handle_err(err)
     return power_limit
 
+#######################################################################
 ### Current / realtime ###
+# These functions retrieve realtime informations and shouldn't be used in a static way. Although
+# they return static values they are called each 2 seconds.
+#######################################################################
 def nvwrap_GetCurrPcieGen(dev):
     handle = nvmlDeviceGetHandleByIndex(dev)
     try:

@@ -19,7 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from PyQt6.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QComboBox, QFormLayout, QLineEdit, QLabel)
+from PyQt6.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QComboBox, QFormLayout, QLineEdit,
+                            QLabel, QMenuBar, QMenu)
+from PyQt6.QtGui import (QAction)
 from PyQt6.QtCore import (QSize, QTimer)
 from rt_widget import RealtimeWidget
 from nvwrap import * # NVML wrapper
@@ -39,7 +41,22 @@ class Window(QMainWindow):
         self.timer.start()
 
     def init_interface(self):
-        self.setFixedSize(QSize(600, 400))
+        self.setFixedSize(QSize(600, 480))
+
+        self.main_menu_bar = QMenuBar()
+        self.filemenu = QMenu("File")
+        self.helpmenu = QMenu("Help")
+        self.main_menu_bar.addMenu(self.filemenu)
+        self.main_menu_bar.addMenu(self.helpmenu)
+        self.setMenuBar(self.main_menu_bar)
+        # Menubar actions
+        self.saveaction = QAction("Save...")
+        self.exitaction = QAction("Exit")
+        self.aboutaction = QAction("About")
+        self.filemenu.addAction(self.saveaction)
+        self.filemenu.addSeparator()
+        self.filemenu.addAction(self.exitaction)
+        self.helpmenu.addAction(self.aboutaction)
 
         central = QWidget()
         main_layout = QHBoxLayout() # central layout
@@ -52,10 +69,19 @@ class Window(QMainWindow):
         left_layout.addWidget(self.devbox)
         
         form = QFormLayout()
+        form.setSpacing(2)
         # Device Serial
         self.serialline = QLineEdit()
         self.serialline.setReadOnly(True)
         form.addRow("Serial:", self.serialline)
+        # DeviceID
+        self.devidline = QLineEdit()
+        self.devidline.setReadOnly(True)
+        form.addRow("Device ID:", self.devidline)
+        # Bridge Chip Type
+        self.bridgeline = QLineEdit()
+        self.bridgeline.setReadOnly(True)
+        form.addRow("Bridge Chip:", self.bridgeline)
         # System Driver version
         self.drvline = QLineEdit()
         self.drvline.setReadOnly(True)
@@ -68,9 +94,7 @@ class Window(QMainWindow):
         self.pciegenline = QLineEdit()
         self.pciegenline.setReadOnly(True)
         self.pciegenline.setToolTip("The PCIe Generation the GPU is supporting. This <b>does not</b> show the <b>current</b> PCIe Generation.")
-        self.c_pciegenLbl = QLabel()
         form.addRow("PCIe Generation:", self.pciegenline)
-        form.addRow("<i>Current:</i> ", self.c_pciegenLbl)
         # PCIe Width
         self.pciewidthline = QLineEdit()
         self.pciewidthline.setReadOnly(True)
@@ -106,10 +130,11 @@ class Window(QMainWindow):
         nvwrap_Init()
         self.devbox.addItems(nvwrap_GetAllDevices())
         self.serialline.setText(nvwrap_GetDeviceSerial(self.devbox.currentIndex()))
+        self.devidline.setText(nvwrap_GetDeviceId(self.devbox.currentIndex()))
+        self.bridgeline.setText(nvwrap_GetBridgeChipType(self.devbox.currentIndex()))
         self.drvline.setText(nvwrap_GetDriverVersion())
         self.vramline.setText(nvwrap_GetTotalMem(self.devbox.currentIndex()))
         self.pciegenline.setText(nvwrap_GetPcieGen(self.devbox.currentIndex()))
-        self.c_pciegenLbl.setText(nvwrap_GetCurrPcieGen(self.devbox.currentIndex()))
         self.pciewidthline.setText(nvwrap_GetPcieWidth(self.devbox.currentIndex()))
         self.c_pciewidthLbl.setText(nvwrap_GetCurrPcieWidth(self.devbox.currentIndex()))
         self.maxtempline.setText(nvwrap_GetTempShutdown(self.devbox.currentIndex()))
